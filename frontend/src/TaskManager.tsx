@@ -12,33 +12,60 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Mock API functions (replace these with actual API calls)
+const API_URL = "http://localhost:3000/todo";
+
 const api = {
-  getTasks: () =>
-    Promise.resolve([
-      {
-        id: 1,
-        title: "Task 1",
-        description: "Description 1",
-        status: "pending",
-        dueDate: "2023-06-30",
-        userId: 1,
+  getTasks: async () => {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+    return data.todos;
+  },
+
+  createTask: async (task: Task) => {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        id: 2,
-        title: "Task 2",
-        description: "Description 2",
-        status: "in-progress",
-        dueDate: "2023-07-15",
-        userId: 1,
+      body: JSON.stringify(task),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create task");
+    }
+    return response.json();
+  },
+
+  updateTask: async (task: Task) => {
+    const response = await fetch(`${API_URL}/${task.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ]),
-  createTask: (task: Task) => Promise.resolve({ ...task, id: Date.now() }),
-  updateTask: (task: Task) => Promise.resolve(task),
-  deleteTask: (id: number) => Promise.resolve(id),
+      body: JSON.stringify(task),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update task");
+    }
+    return response.json();
+  },
+
+  deleteTask: async (id: number) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete task");
+    }
+    return id;
+  },
 };
 
-// Define the Task type
 type Task = {
   id?: number;
   title: string;
@@ -63,12 +90,11 @@ export default function TaskManager() {
     fetchTasks();
   }, []);
 
-  // Fetch tasks
   const fetchTasks = async () => {
     const fetchedTasks = await api.getTasks();
+    setTasks(fetchedTasks);
   };
 
-  // Handle input changes for task title and description
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
