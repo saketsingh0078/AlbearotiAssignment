@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const API_URL = "http://localhost:3000/todo";
+const API_URL = "http://localhost:3000";
 
 const api = {
   getTasks: async () => {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}+"/"`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
@@ -25,11 +25,7 @@ const api = {
   },
 
   createTask: async (task: Task) => {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(`${API_URL}+"/"`, {
       body: JSON.stringify(task),
     });
     if (!response.ok) {
