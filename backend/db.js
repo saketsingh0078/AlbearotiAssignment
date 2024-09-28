@@ -1,11 +1,9 @@
 import mongoose, { model, Schema } from "mongoose";
 
 try {
-  mongoose.connect(
-    "mongodb+srv://yuko:Yuko%40123456@cluster0.iec1sgv.mongodb.net/Todo"
-  );
+  mongoose.connect("");
 } catch (e) {
-  console.log("Error while connecting to DB", e);
+  console.log("Error while connecting to Database", e);
 }
 
 const userSchema = new mongoose.Schema({
